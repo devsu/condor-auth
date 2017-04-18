@@ -1,0 +1,6 @@
+{
+  "extends": "devsu-node",
+  "rules": {
+    "no-console": "off"
+  }
+}

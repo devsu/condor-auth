@@ -1,0 +1,38 @@
+{
+  "name": "condor-auth",
+  "version": "0.0.1",
+  "description": "Condor Authorization Middleware",
+  "main": "index.js",
+  "scripts": {
+    "test": "istanbul cover jasmine",
+    "posttest": "npm run lint && nsp check && istanbul check-coverage",
+    "lint": "eslint .",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devsu/condor-auth.git"
+  },
+  "keywords": [
+    "condor",
+    "middleware",
+    "authentication",
+    "authorization",
+    "grpc"
+  ],
+  "author": "Cesar Salazar @ Devsu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/devsu/condor-auth/issues"
+  },
+  "homepage": "https://github.com/devsu/condor-auth#readme",
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-devsu-node": "0.0.3",
+    "istanbul": "^0.4.5",
+    "jasmine": "^2.5.3",
+    "jasmine-spy": "0.0.2",
+    "nsp": "^2.6.3"
+  },
+  "dependencies": {}
+}
