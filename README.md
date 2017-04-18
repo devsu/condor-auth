@@ -28,7 +28,6 @@ Here's an example on how you would instantiate **condor-auth** and map the token
 ```js
 const Condor = require('condor-framework');
 const Auth = require('condor-auth').Auth;
-const Grant = require('condor-auth').Grant;
 const Greeter = require('./greeter');
 
 const options = {
@@ -42,12 +41,12 @@ const auth = new Auth(options, (context, token) => {
   console.log('token', token);
   // do your magic here, to calculate the resources and roles the user has access to
   // You can get the information from the token (or from anywhere).
-  // Then return a Grant object with the information.
-  return new Grant({
+  // Then return an object with the information.
+  return {
     'my-grpc-service': ['view-all'],
     'another-app': ['create', 'update-own', 'view-all'],
     'realm': ['admin', 'user'],
-  });
+  };
 });
 
 // Then just initiate the server, and use the middleware
@@ -57,7 +56,7 @@ const app = new Condor()
   .start();
 ```
 
-As you can see, you must return a `Grant` object from the mapping method. This object should be a map with the resource names as the keys, and an array of roles as the values.
+As you can see, you must return an object from the mapping method. This object should be a map with the resource names as the keys, and an array of roles as the values.
 
 Some [strategies](#strategies) might provide their own mappers, so you don't need to write the `mapper` method.
 
