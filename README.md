@@ -4,7 +4,7 @@ An authorization Middleware for [Condor](http://condorjs.com). **Condor** is a [
 
 This module control access to **GRPC methods**, based on the **access rules** defined.
 
-It has been thought to work with [JWTs](https://jwt.io/), but it can contain any custom logic for mapping the request to the permissions a user has.
+It has been thought to work with [JWTs](https://jwt.io/), but you can plug in any other ready to use or custom [strategy](#strategies).
 
 ## Installation
 
@@ -16,8 +16,8 @@ npm install --save condor-auth
 
 Two steps are needed for authorization to work:
 
-- First we need to define how to map the `authorization` metadata to the actual user roles.
-- Then we should define when to grant access to the GRPC methods.
+- First we need to define how to obtain the user resources and roles from the token (or from anywhere else).
+- Then we should define the permissions required to access each of the GRPC methods.
 
 ### 1. Mapping Roles 
 
@@ -50,6 +50,7 @@ const auth = new Auth(options, (context, token) => {
   });
 });
 
+// Then just initiate the server, and use the middleware
 const app = new Condor()
   .addService('./protos/greeter.proto', 'myapp.Greeter', new Greeter())
   .use(auth.middleware)
@@ -58,7 +59,7 @@ const app = new Condor()
 
 As you can see, you must return a `Grant` object from the mapping method. This object should be a map with the resource names as the keys, and an array of roles as the values.
 
-We plan to add ready to use [strategies](#strategies) that provide their own verifiers and mappers.
+Some [strategies](#strategies) might provide their own mappers, so you don't need to write the `mapper` method.
 
 ## 2. Configuring Access Rules
 
@@ -140,7 +141,7 @@ All values are optional. Their default values are:
 
 | Option             | Description                                                            | Default         |
 |--------------------|------------------------------------------------------------------------|-----------------|
-| resourceId         | The name of the application, used to simplify roles validation         |                 |
+| resourceId         | The name of the application                                            |                 |
 | rulesFile          | The path to the rules file                                             | access-rules.js |
 | secretOrPublicKey  | The key that should be used to verify a token                          |                 |
 | strategy           | The strategy to use (if you don't want to use the default strategy)    |                 |
@@ -149,7 +150,7 @@ Also, it will accept any options of the [verify](https://github.com/auth0/node-j
 
 ## Strategies
 
-Strategies allow to customize:
+Strategies allow you to customize:
 
 - How the tokens are verified and decoded
 - How the tokens are mapped to roles
