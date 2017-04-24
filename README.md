@@ -15,16 +15,26 @@ npm install --save condor-auth
 
 ## How to use
 
-Two steps are needed for authorization to work:
+By default, this module is designed to work with **JWts** and **role-based** authorization. Anyways, it's flexible enough to allow any other authorization [strategy](#strategies).
 
-- First we need to define how to obtain the user permissions from the token (or from anywhere else).
-- Then we should define the permissions required to access each of the GRPC methods.
+### Role-based authorization
 
-### 1. Mapping Permissions 
+Two steps are needed for role-based authorization to work:
+
+- [1. Map the roles](#1-mapping-roles): Define how to obtain the roles from the token (or from anywhere else).
+- [2. Configure access rules](#2-configuring-access-rules): Define the roles required to access each of the GRPC methods.
+
+### Resource-based authorization
+
+For resource based authorization, you can skip step one, and just use **custom validators** when defining the [access rules](#2-configuring-access-rules).
+
+### 1. Mapping Roles 
 
 By default, **condor-auth** expects a valid JWT token in the `authorization` metadata. It will verify it, and convert it to an object you can easily use.
 
-Then, you need to define how to map the information in the token to the resources the permissions the user has. 
+Then, you need to define how to map the information in the token to the roles the user has. 
+
+Let's say for example, that the user has the `admin` role in `my-grpc-application`, and the `user` roles in `another-app`.
 
 Here's an example on how you would instantiate **condor-auth** and map the permissions. 
 
@@ -49,9 +59,9 @@ const auth = new Auth((context, token) => {
   // You can get the information from the token (or from anywhere).
   // Then return an object with the information.
   return {
-    'my-grpc-service': ['view-all'],
-    'another-app': ['create', 'update-own', 'view-all'],
-    'realm': ['admin', 'user'],
+    'my-grpc-service': ['admin'],
+    'another-app': ['user', 'another-role'],
+    'realm': ['admin', 'user', 'yet-another-role'],
   };
 }, options);
 
@@ -65,6 +75,8 @@ const app = new Condor()
 As you can see, the mapping method must return an object. This object should be a map with the resource names as the keys, and an array of roles as the values.
 
 ## 2. Configuring Access Rules
+
+After mapping the roles, you will need to define the rules to access each of the methods in your GRPC service.
 
 By default, when no options are passed, it will try to read the access rules from `access-rules.js`. This file is where you configure all the access rules for your application.
 
@@ -115,19 +127,19 @@ Using these rules, we're telling the application:
 
 #### $anonynous and $authenticated
 
-You can use `$authenticated` to enforce a user to be authenticated before accessing the method (without verifying any roles).
+You can use `$authenticated` to enforce a user to be authenticated before accessing the method (without verifying any roles). A user is considered authenticated when the token received in the metadata is valid.
 
-In the same manner, you can use `$anonymous` if you want to make a resource public.
+On the other hand, you can use `$anonymous` to make a resource public.
 
-#### Permission and Resource:Permission
+#### Role and Resource:Role
 
-If it's a permission in the current application, you can just use the permission name e.g. `special`. For this to work, you must pass the `applicationName` option when creating the `Auth` instance.
+If it's a role in the current application, you can just use the permission/role name e.g. `special`. For this to work, you must pass the `applicationName` option when creating the `Auth` instance.
 
-If it's a permission of another application/resource, use the resource name and the permission name. e.g. `another-app:special`.
+If it's a permission or role of another application/resource, use the resource name and the role/permission name. e.g. `another-app:special`.
 
-#### Custom Validation
+#### Custom Validators
 
-For custom validation, just pass the function (make sure to pass the actual function, not only the function name).
+If you need some specific logic to authorize/deny access, just pass the function that must perform the validation (make sure to pass the actual function, not only the function name).
 
 The validation function will be called with two parameters: 
 
@@ -140,9 +152,9 @@ The validation function must return a truthy value to allow access. Any falsy va
 
 You can pass not only one option, but an array of options to authorize the call. If any of them pass, the call will be authorized.
 
-#### How to require two permissions? (use AND instead of OR)
+#### How to require two roles? (use AND instead of OR)
 
-The module is designed for the most common usages, but we're sure there will be cases where your requirements will be different, in that case you can use custom validation functions that do exactly what you want. You can have for example something like this:
+The module is designed for the most common scenario, but we're sure there will be cases where your requirements will be different, in that case you can use custom validation functions that do exactly what you want. You can have for example something like this:
  
  ```js
  module.exports = {
@@ -169,7 +181,7 @@ All values are optional. Their default values are:
 
 | Option             | Description                                                                                            | Default         |
 |--------------------|--------------------------------------------------------------------------------------------------------|-----------------|
-| applicationName    | The name of the application. To allow rules like 'my-permission', instead of 'my-app:my-permission')   |                 |
+| applicationName    | The name of the application. To allow rules like 'my-role', instead of 'my-app:my-role')               |                 |
 | rulesFile          | The path to the rules file                                                                             | access-rules.js |
 | rules              | The access rules to use (can be used instead of rulesFile)                                             |                 |
 | secretOrPublicKey  | The key that should be used to verify a token                                                          |                 |
@@ -187,7 +199,7 @@ Strategies allow you to customize:
 Known strategies are:
 
 - **Default strategy**: Bundled. It decodes and verifies JWTs using [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) module. It doesn't provide a mapping method.
-- **[condor-auth-keycloak](https://github.com/devsu/condor-auth-keycloak)**. It verifies the token against keycloak, and map realm roles and resources roles to permissions automatically.
+- **[condor-auth-keycloak](https://github.com/devsu/condor-auth-keycloak)**. It verifies the token against keycloak, and map realm roles and resources roles automatically.
 
 ## How to call from a client
 

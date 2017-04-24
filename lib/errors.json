@@ -1,6 +1,6 @@
 {
   "TOKEN_REQUIRED": "token string is required",
   "KEY_REQUIRED": "options.secretOrPublicKey is required to verify the token",
-  "MAPPING_METHOD_REQUIRED": "Mapping method missing. One of mapPermissionsMethod or strategy.mapPermissions is required.",
+  "INVALID_MAPPING_ROLES_METHOD": "MappingRoles method is invalid.",
   "RULES_REQUIRED": "Rules parameter is required."
 }
