@@ -2,6 +2,9 @@
 
 An authorization Middleware for [Condor](http://condorjs.com). **Condor** is a [GRPC Framework for node](https://github.com/devsu/condor-framework).
 
+[![Build Status](https://travis-ci.org/devsu/condor-auth.svg?branch=master)](https://travis-ci.org/devsu/condor-auth)
+[![Coverage Status](https://coveralls.io/repos/github/devsu/condor-auth/badge.svg?branch=master)](https://coveralls.io/github/devsu/condor-auth?branch=master)
+
 This module control access to **GRPC methods**, based on the **access rules** defined.
 
 It has been thought to work with [JWTs](https://jwt.io/), but you can plug in any other [strategy](#strategies).
@@ -9,8 +12,7 @@ It has been thought to work with [JWTs](https://jwt.io/), but you can plug in an
 ## Installation
 
 ```bash
-npm install --save condor-framework
-npm install --save condor-auth
+npm i --save condor-framework condor-auth
 ```
 
 ## How to use

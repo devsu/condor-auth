@@ -1,6 +1,6 @@
 {
   "name": "condor-auth",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Condor Authorization Middleware",
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,7 @@
   "homepage": "https://github.com/devsu/condor-auth#readme",
   "devDependencies": {
     "bluebird": "^3.5.0",
+    "coveralls": "^2.13.1",
     "eslint": "^3.19.0",
     "eslint-config-devsu-node": "0.0.3",
     "fs-extra": "^2.1.2",
