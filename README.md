@@ -201,6 +201,13 @@ Known strategies are:
 - **Default strategy**: Bundled. It decodes and verifies JWTs using [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) module. It doesn't provide a mapping method.
 - **[condor-auth-keycloak](https://github.com/devsu/condor-auth-keycloak)**. It verifies the token against keycloak, and map realm roles and resources roles automatically.
 
+### How to create your own strategy
+
+You will to define the following methods:
+
+- **mapRoles(context, token)**: (Optional): This method receives the context, and token, and should return an object with the resource names as keys and an array of roles the user has, as values.
+- **decodeAndVerifyToken(context, options)**: (Optional): This method receives the context, and all the options passed in the `Auth` constructor. It should return the decoded token if valid, or null/undefined otherwise. Any thruthy value will be consider as a valid token, and the user will be considered to be authenticated. You can take a look at the **DefaultStrategy** to see an example of the implementation. 
+
 ## How to call from a client
 
 The caller just need to include the `authorization` metadata, with a valid JWT.
