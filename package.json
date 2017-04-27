@@ -28,6 +28,7 @@
   "homepage": "https://github.com/devsu/condor-auth#readme",
   "devDependencies": {
     "bluebird": "^3.5.0",
+    "condor-framework": "^1.2.1",
     "coveralls": "^2.13.1",
     "eslint": "^3.19.0",
     "eslint-config-devsu-node": "0.0.3",
