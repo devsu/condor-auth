@@ -38,8 +38,8 @@
     "jasmine": "^2.5.3",
     "jasmine-spy": "0.0.2",
     "jsonwebtoken": "^7.3.0",
-    "nsp": "^2.6.3",
-    "ursa": "^0.9.4"
+    "keypair": "^1.0.1",
+    "nsp": "^2.6.3"
   },
   "dependencies": {
     "jsonwebtoken": "^7.3.0"

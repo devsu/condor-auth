@@ -1,10 +1,12 @@
-const ursa = require('ursa');
+const keypair = require('keypair');
 const jwt = require('jsonwebtoken');
+
+const generatedKeys = keypair();
 
 module.exports = class {
 
   setupToken(expiration) {
-    this.keys = this.getSampleKeys();
+    this.keys = generatedKeys;
     this.kid = '1234567';
     this.header = {
       'alg': 'RS256',
@@ -14,7 +16,7 @@ module.exports = class {
     this.payload = this.getSamplePayload();
     this.payload.exp = expiration;
     this.tokenString = this.getSignedTokenString(this.payload, this.kid,
-      this.keys.toPrivatePem('utf8'));
+      this.keys.private);
     this.signature = this.tokenString.split('.')[2];
     this.bearerTokenString = `Bearer ${this.tokenString}`;
   }
@@ -27,10 +29,6 @@ module.exports = class {
   setupValidToken() {
     const expiration = Math.floor(Date.now() / 1000) + (60 * 60);
     return this.setupToken(expiration);
-  }
-
-  getSampleKeys() {
-    return ursa.generatePrivateKey();
   }
 
   getSignedTokenString(payload, kid, privatePem) {
